@@ -5,6 +5,7 @@ import io.ktor.network.sockets.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.BroadcastChannel
 import java.util.Collections.synchronizedMap
 import java.util.concurrent.atomic.*
@@ -12,7 +13,7 @@ import java.util.concurrent.atomic.*
 typealias Username = String
 typealias Password = String
 data class ChatMessage(val sender: Username, val content: String)
-data class Connection(val session: DefaultWebSocketSession, val username: Username)
+data class Connection(val session: DefaultWebSocketServerSession, val username: Username)
 
 object Hub {
     private val connections: MutableMap<Username, Connection> = synchronizedMap(HashMap())
@@ -57,7 +58,8 @@ object Hub {
         userDB[request.username] = request.password
         return thisConnection
     }
-    fun logOut(username: String) {
+    fun Connection.logOut(username: String) {
+        session.call.application.environment.log.info("Logged out: $username")
         connections.remove(username)
     }
 }

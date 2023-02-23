@@ -1,22 +1,19 @@
 package com.example.plugins
 
 import com.example.*
-import io.ktor.server.websocket.*
-import io.ktor.websocket.*
-import java.time.Duration
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
+import io.ktor.server.websocket.*
 import io.ktor.util.*
+import io.ktor.websocket.*
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
+import java.time.Duration
 import java.util.*
-import javax.jws.soap.SOAPBinding.Use
-
-var id = 0
 
 fun Application.configureSockets() {
     install(WebSockets) {
@@ -39,7 +36,9 @@ fun Application.configureSockets() {
                 }
                 Channel<Int>().receive()
             } finally {
-                Hub.logOut(thisConnection.username)
+                with(Hub) {
+                    thisConnection.logOut(thisConnection.username)
+                }
             }
         }
     }
@@ -64,6 +63,7 @@ private suspend fun DefaultWebSocketServerSession.authenticate(): Connection =
                     send(status.reason + System.lineSeparator())
                     null
                 }
+
                 is Hub.AuthRequestStatus.Passed -> {
                     send("Logged in as ${status.username}\n")
                     logIn(status)
