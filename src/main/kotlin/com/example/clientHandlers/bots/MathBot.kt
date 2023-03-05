@@ -2,7 +2,7 @@ package com.example.clientHandlers.bots
 
 val MathBot = newBot("MathBot") {
     addMethod(Bot.Method("list", listOf("n"), "Print n, n-1, ..., 1") { _, args ->
-        val n = args[0].toInt()
+        val n = args.first().toInt()
         if (n != 0) {
             broadcastMsg("$botPrefix$name list ${n - 1}")
         }

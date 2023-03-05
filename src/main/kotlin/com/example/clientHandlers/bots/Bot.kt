@@ -89,7 +89,7 @@ abstract class Bot(override val name: BotName, override val server: ChatServer) 
 
     fun addMethod(method: Method) = methods.set(method.name, method)
 
-    private suspend fun sendPrivateMsgIfUserIsOnline(
+    internal suspend fun sendPrivateMsgIfUserIsOnline(
         recipient: Username,
         content: String
     ) = server.hub.activeConnections[recipient]?.incomingMsgs?.emit(

@@ -38,8 +38,8 @@ class Hub {
 
 
     fun AuthenticatedClient.logOut() {
-        //call.application.environment.log.info("Logged out: ${username.username}")
-       // activeConnections.remove(username.username)
+        call.application.environment.log.info("Logged out: $username")
+        activeConnections.remove(username)
     }
 
     suspend fun broadcastMsg(msg: ChatMessage) =

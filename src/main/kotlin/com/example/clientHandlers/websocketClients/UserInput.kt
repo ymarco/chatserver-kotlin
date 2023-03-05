@@ -43,7 +43,7 @@ class InputFactory(
         return Pair(cmd, args)
     }
 
-    public fun new(str: String): UserInput =
+    fun new(str: String): UserInput =
         if (isCommand(str)) {
             val (cmdStr, args) = splitToCmdAndArgs(str)
             val cmd = Command.fromStringWithoutCmdPrefix(cmdStr)
