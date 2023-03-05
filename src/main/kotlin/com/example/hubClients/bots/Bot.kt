@@ -1,4 +1,4 @@
-package com.example.clientHandlers.bots
+package com.example.hubClients.bots
 
 import com.example.server.ChatMessage
 import com.example.server.ChatServer
@@ -42,7 +42,7 @@ abstract class Bot(override val name: BotName, override val server: ChatServer) 
 
     final override val incomingMsgs = MutableSharedFlow<ChatMessage>()
 
-    private val incomingCmds: Flow<MethodCallAttempt>
+    val incomingCmds: Flow<MethodCallAttempt>
 
     private val methods = LinkedHashMap<String, Method>()
 
@@ -52,6 +52,10 @@ abstract class Bot(override val name: BotName, override val server: ChatServer) 
             .filter { isBotCommand(it.content) }
             .filter { isDirectedAtUs(it.content) }
             .map(::parseToMethodCallAttempt)
+            // without this flowOn, bots get deadlocked upon sending messages since the
+            // SharedFlow buffer is 0 and the coroutine they try to receive on is the same
+            // one they're emitting on
+            .flowOn(Dispatchers.Default)
     }
 
     private fun parseToMethodCallAttempt(it: ChatMessage): MethodCallAttempt {
@@ -97,7 +101,7 @@ abstract class Bot(override val name: BotName, override val server: ChatServer) 
     )
 
 
-    private suspend fun MethodCallAttempt.callOrRelayError() {
+    suspend fun MethodCallAttempt.callOrRelayError() {
         val method = methods[this.callee]
         if (method != null)
             method.invoke(caller, args)
@@ -108,12 +112,13 @@ abstract class Bot(override val name: BotName, override val server: ChatServer) 
             )
     }
 
-    suspend fun run() {
-        incomingCmds.flowOn(Dispatchers.Default).collect {
+    open suspend fun run() {
+        incomingCmds.collect {
             it.callOrRelayError()
         }
     }
 }
+
 fun newBot(name: String, initFn: Bot.() -> Unit) = object : BotConstructor {
     override fun new(server: ChatServer) = object : Bot(name, server) {
         init {

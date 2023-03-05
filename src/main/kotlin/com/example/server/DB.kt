@@ -1,6 +1,6 @@
 package com.example.server
 
-import com.example.clientHandlers.websocketClients.Credentials
+import com.example.hubClients.websocketClients.Credentials
 import io.ktor.util.collections.*
 
 class DB {

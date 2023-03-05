@@ -1,4 +1,4 @@
-package com.example.clientHandlers.websocketClients
+package com.example.hubClients.websocketClients
 
 import com.example.retryUntilNotNull
 import com.example.sendln
@@ -17,7 +17,7 @@ class UnauthenticatedClient(session: WebSocketServerSession, val server: ChatSer
             val request = acceptAuthRequest()
 
             with(server) {
-                when (val status = checkAuthRequest(request)) {
+                when (val status = server.check(request)) {
                     is AuthRequestStatus.Failed -> {
                         sendln(status.reason)
                         null

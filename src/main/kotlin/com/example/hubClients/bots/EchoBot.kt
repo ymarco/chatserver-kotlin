@@ -1,4 +1,4 @@
-package com.example.clientHandlers.bots
+package com.example.hubClients.bots
 
 val EchoBot = newBot("EchoBot") {
     addMethod(

@@ -1,7 +1,7 @@
 package com.example.server
 
-import com.example.clientHandlers.websocketClients.AuthenticatedClient
-import com.example.clientHandlers.bots.Bot
+import com.example.hubClients.websocketClients.AuthenticatedClient
+import com.example.hubClients.bots.Bot
 import io.ktor.util.collections.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -44,8 +44,6 @@ class Hub {
 
     suspend fun broadcastMsg(msg: ChatMessage) =
         activeConnections.forEach { (_, client) -> client.incomingMsgs.emit(msg) }
-
-    fun addBot(bot: Bot) = activeConnections.set(bot.name, bot)
 
 }
 

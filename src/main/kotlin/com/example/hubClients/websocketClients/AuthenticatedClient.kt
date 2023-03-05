@@ -1,4 +1,4 @@
-package com.example.clientHandlers.websocketClients
+package com.example.hubClients.websocketClients
 
 import com.example.sendln
 import com.example.server.ChatMessage
