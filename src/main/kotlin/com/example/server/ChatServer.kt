@@ -17,6 +17,7 @@ import io.ktor.server.netty.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.Duration
@@ -76,10 +77,8 @@ class ChatServer(
     fun addNewBot(name: String, initFn: Bot.() -> Unit) =
         addBot(newBot(name, initFn))
 
-    fun run() {
-
-        thread { runBlocking { hub.runBots() } }
-        ktorServer.start(wait = true)
-
+    suspend fun run() = coroutineScope {
+        launch { hub.runBots() }
+        launch(Dispatchers.Default) { ktorServer.start(wait = true) }
     }
 }
