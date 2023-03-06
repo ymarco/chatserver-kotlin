@@ -69,6 +69,11 @@ class ChatServer(
             return client
         }
     }
+    fun AuthenticatedClient.logOut() {
+        with(hub){
+            logOut()
+        }
+    }
 
 
     fun addBot(botConstructor: BotConstructor) = hub.add(botConstructor.new(this))

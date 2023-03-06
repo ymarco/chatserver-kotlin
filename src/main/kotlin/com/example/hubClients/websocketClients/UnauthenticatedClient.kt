@@ -69,7 +69,7 @@ class UnauthenticatedClient(session: WebSocketServerSession, val server: ChatSer
         try {
             client.run()
         } finally {
-            with(server.hub) { client.logOut() }
+            with(server) { client.logOut() }
         }
     }
 
