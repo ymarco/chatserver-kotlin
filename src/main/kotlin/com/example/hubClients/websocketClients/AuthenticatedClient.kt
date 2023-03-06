@@ -32,19 +32,19 @@ class AuthenticatedClient(
             .collect(UserInput::execute)
     }
 
-    private suspend fun printIncomingChatMsgs() {
+    private suspend fun forwardIncomingChatMsgs() {
         incomingMsgs
             .filter { it.sender != this.username }
-            .collect(::relayMsgToUser)
+            .collect(::forwardMsgToUser)
     }
 
-    private suspend fun relayMsgToUser(msg: ChatMessage) {
+    private suspend fun forwardMsgToUser(msg: ChatMessage) {
         sendln("${msg.sender}: ${msg.content}")
     }
 
-    suspend fun mainLoop() = coroutineScope {
+    suspend fun run() = coroutineScope {
         val job = launch {
-            printIncomingChatMsgs()
+            forwardIncomingChatMsgs()
         }
         executeIncomingUserInput()
         job.cancel()

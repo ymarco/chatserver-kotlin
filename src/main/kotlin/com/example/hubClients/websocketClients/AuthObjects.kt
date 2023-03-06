@@ -26,6 +26,9 @@ sealed interface AuthRequestStatus {
 fun ChatServer.check(request: AuthRequest) = request.check(this)
 
 sealed class AuthRequest(val creds: Credentials) {
+    /**
+     * @param server the server to check against
+     */
     abstract fun check(server: ChatServer): AuthRequestStatus
 
     class Login(creds: Credentials) : AuthRequest(creds) {
@@ -37,8 +40,6 @@ sealed class AuthRequest(val creds: Credentials) {
             } else {
                 AuthRequestStatus.Passed.Login(creds)
             }
-
-
     }
 
     class Register(creds: Credentials) : AuthRequest(creds) {
@@ -48,7 +49,6 @@ sealed class AuthRequest(val creds: Credentials) {
             } else {
                 AuthRequestStatus.Passed.Register(creds)
             }
-
     }
 
     companion object {

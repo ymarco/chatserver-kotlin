@@ -1,12 +1,13 @@
 package com.example.hubClients.websocketClients
 
+import com.example.hubClients.websocketClients.AuthAction.Login
+import com.example.hubClients.websocketClients.AuthAction.Register
 import com.example.retryUntilNotNull
 import com.example.sendln
 import com.example.server.ChatServer
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.launch
 
 
 class UnauthenticatedClient(session: WebSocketServerSession, val server: ChatServer) :
@@ -17,7 +18,7 @@ class UnauthenticatedClient(session: WebSocketServerSession, val server: ChatSer
             val request = acceptAuthRequest()
 
             with(server) {
-                when (val status = server.check(request)) {
+                when (val status = check(request)) {
                     is AuthRequestStatus.Failed -> {
                         sendln(status.reason)
                         null
@@ -42,7 +43,8 @@ class UnauthenticatedClient(session: WebSocketServerSession, val server: ChatSer
         (receive() as? Frame.Text)?.readText()?.trim()
 
     private suspend inline fun promptForString(
-        prompt: String, evaluator: ((String) -> Boolean) = { true }
+        prompt: String,
+        evaluator: ((String) -> Boolean) = { true }
     ): String? {
         sendln(prompt)
         val res = incoming.receiveText() ?: return null
@@ -50,9 +52,9 @@ class UnauthenticatedClient(session: WebSocketServerSession, val server: ChatSer
     }
 
     private suspend fun chooseLoginOrRegister(): AuthAction = retryUntilNotNull {
-        when (promptForString("Type ${AuthAction.Login.str} to login, ${AuthAction.Register.str} to register:")) {
-            AuthAction.Login.str -> AuthAction.Login
-            AuthAction.Register.str -> AuthAction.Register
+        when (promptForString("Type ${Login.str} to login, ${Register.str} to register:")) {
+            Login.str -> Login
+            Register.str -> Register
             else -> null
         }
     }

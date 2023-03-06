@@ -3,11 +3,6 @@ package com.example.server
 import com.example.hubClients.bots.Bot
 import com.example.hubClients.bots.BotConstructor
 import com.example.hubClients.bots.newBot
-import com.example.hubClients.websocketClients.AuthRequest
-import com.example.hubClients.websocketClients.AuthRequest.Login
-import com.example.hubClients.websocketClients.AuthRequest.Register
-import com.example.hubClients.websocketClients.AuthRequestStatus
-import com.example.hubClients.websocketClients.AuthRequestStatus.Failed
 import com.example.hubClients.websocketClients.AuthRequestStatus.Passed
 import com.example.hubClients.websocketClients.AuthenticatedClient
 import com.example.hubClients.websocketClients.UnauthenticatedClient
@@ -19,10 +14,9 @@ import io.ktor.server.websocket.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.time.Duration
-import kotlin.concurrent.thread
 
+// Keep
 data class UnreachableCodeException(val str: String? = null) : Exception(str)
 
 class ChatServer(
@@ -50,7 +44,8 @@ class ChatServer(
 
             routing {
                 webSocket(path = "/chat") {
-                    UnauthenticatedClient(this, this@ChatServer).runSession()
+                    UnauthenticatedClient(this, this@ChatServer)
+                        .runSession()
                 }
             }
 
