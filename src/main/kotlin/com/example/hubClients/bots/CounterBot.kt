@@ -12,7 +12,7 @@ class CounterBot(server: ChatServer) : Bot("CounterBot", server) {
 
     init {
         addMethod(Method("add", listOf("n"), "add N to current counter") { caller, args ->
-            val diff = args[0].toIntOrNull()
+            val diff = args.firstOrNull()?.toIntOrNull()
             if (diff == null) {
                 sendPrivateMsgIfUserIsOnline(caller, "N must be an integer")
                 return@Method

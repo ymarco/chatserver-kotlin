@@ -24,13 +24,20 @@ abstract class Bot(override val name: BotName, override val server: ChatServer) 
 
     data class Method(
         val name: String,
-        val args: List<String>,
+        val argsDescription: List<String>,
         val description: String,
         val call: suspend Bot.(caller: Username, args: List<String>) -> Unit
     ) {
-        fun describe(): String =
-            """    $name ${args.joinToString(" ", transform = String::uppercase)}
-                       $description"""
+        fun describe(): String {
+            val describeArgs =
+                argsDescription.joinToString(" ", transform = String::uppercase)
+            return """
+                   $name $describeArgs
+                       $description
+                    """
+                .trimIndent()
+
+        }
     }
 
     data class MethodCallAttempt(
@@ -38,7 +45,17 @@ abstract class Bot(override val name: BotName, override val server: ChatServer) 
         val callee: MethodName,
         val args: List<String>
     )
+    // TODO
+    data class MethodEnv(
+        val bot: Bot,
+        val method: Method,
+        val callAttempt: MethodCallAttempt
+    ) {
+        suspend fun printUsage() =
+            bot.sendPrivateMsgIfUserIsOnline(callAttempt.caller,
+                with(method){"Usage: $name ${argsDescription.joinToString(" ")}"})
 
+    }
 
     final override val incomingMsgs = MutableSharedFlow<ChatMessage>()
 

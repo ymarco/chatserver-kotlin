@@ -16,7 +16,11 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.time.Duration
 
-// Keep
+/**
+ * Every once in a while Kotlin gets confused and says we aren't covering all
+ * the cases in a when() expression even though we are. Keep this in case it
+ * happens again.
+ */
 data class UnreachableCodeException(val str: String? = null) : Exception(str)
 
 class ChatServer(
@@ -72,7 +76,6 @@ class ChatServer(
 
 
     fun addBot(botConstructor: BotConstructor) = hub.add(botConstructor.new(this))
-
 
     fun addNewBot(name: String, initFn: Bot.() -> Unit) =
         addBot(newBot(name, initFn))
